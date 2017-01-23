@@ -8,7 +8,7 @@
   <body>
     <div class="container">
       <h1>Token Testnet Eth Faucet</h1>
-      <h3>Faucet Address: {{ faucet_address }}</h3>
+      <h3>Faucet Address: <a href="https://testnet.etherscan.io/address/{{ faucet_address }}">{{ faucet_address }}</a></h3>
       <h3>Available Ethereum: {{ available_ethereum }}</h3>
       <form method="POST">
         {% if success %}
