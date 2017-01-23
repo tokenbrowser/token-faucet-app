@@ -27,5 +27,6 @@ heroku config:set ETHEREUM_SERVICE_URL=https://token-eth-service.herokuapp.com
 heroku config:set FAUCET_ADDRESS=0x....
 heroku config:set FAUCET_PRIVATE_KEY=0x...
 
+git push heroku master
 heroku ps:scale web:1
 ```
