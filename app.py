@@ -53,4 +53,31 @@ def main():
                 args['error'] = str(e)
 
         args.update({k: request.form[k] for k in request.form.keys()})
+
+    elif request.method == 'GET':
+
+        args['address'] = request.args.get('address')
+        value = request.args.get('wei')
+        if value:
+            value = parse_int(value)
+            if value is None:
+                args['error'] = "Invalid 'wei' value"
+            else:
+                value = str(value)
+                if len(value) < 19:
+                    value = value.zfill(19)
+                value = "{}.{}".format(value[:-18], value[-18:])
+                args['value'] = value
+        else:
+            value = request.args.get('ether')
+            if value:
+                if value.startswith('0x'):
+                    args['error'] = "Hex not allowed in 'ether' arg: use 'wei' instead"
+                else:
+                    try:
+                        value = Decimal(value)
+                        args['value'] = value
+                    except:
+                        args['error'] = "Invalid 'ether' value"
+
     return render_template('index.html', **args)
