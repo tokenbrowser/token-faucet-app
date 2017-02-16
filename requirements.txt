@@ -1,3 +1,4 @@
 flask
 gunicorn
+-e git+ssh://git@github.com/tristan/ethutils.git#egg=ethutils
 -e git+ssh://git@github.com/tokenbrowser/tokenbrowser-python.git#egg=tokenbrowser

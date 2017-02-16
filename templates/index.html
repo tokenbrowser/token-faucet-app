@@ -12,20 +12,33 @@
       <h3>Available Ethereum: {{ available_ethereum }}</h3>
       <form method="POST">
         {% if success %}
-          <p class="bg-success">Successfully sent {{ value }} eth.<br/>Tx Hash: <a href="https://testnet.etherscan.io/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
+	  {% if uport %}
+            <p class="bg-success">UportID being created. See link below for progress and results.<br/>Tx Hash: <a href="https://testnet.etherscan.io/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
+	  {% else %}
+            <p class="bg-success">Successfully sent {{ value }} eth.<br/>Tx Hash: <a href="https://testnet.etherscan.io/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
+	  {% endif %}
         {% endif %}
         {% if error %}
           <p class="bg-danger">{{ error }}</p>
         {% endif %}
         <div class="form-group">
-          <label for="address">Target address</label>
+          <label for="address">Target address / UPort Device Address</label>
           <input type="input" class="form-control" name="address" placeholder="0x..." value="{{ address }}" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <div class="form-group">
           <label for="value">Amount of Eth</label>
           <input type="number" step="any" class="form-control" name="value" placeholder="0.01" autocomplete="off" value="{{ value }}" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
-        <button type="submit" class="btn btn-default">Send</button>
+        <div class="form-group">
+          <label for="value">Gas Price in Wei (optional)</label>
+          <input type="number" step="any" class="form-control" name="gasprice" placeholder="20000000000" autocomplete="off" value="{{ gasprice }}" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="form-group">
+          <label for="value">Start Gas (optional)</label>
+          <input type="number" step="any" class="form-control" name="startgas" placeholder="21000" autocomplete="off" value="{{ startgas }}" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <button type="submit" name="send" value="true" class="btn btn-default">Send</button>
+        <button type="submit" name="uport" value="true" class="btn btn-default">Create UPort ID</button>
       </form>
     </div>
   </body>
