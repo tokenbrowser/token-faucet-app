@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Token Testnet Eth Faucet</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+     .icon {
+       width: 64px;
+       height: 64px;
+       background-size: cover;
+       background-repeat: no-repeat;
+       border-radius: 5%;
+       box-shadow: inset rgba(255, 255, 255, 0.6) 0 2px 2px, inset rgba(0, 0, 0, 0.3) 0 -2px 6px;
+     }
+     {% if not error and not unsupported %}
+     .from {
+       background-image: url(https://token-id-service.herokuapp.com/identicon/{{ tx.from.lower() }}.png);
+     }
+     .to {
+       background-image: url(https://token-id-service.herokuapp.com/identicon/{{ tx.to.lower() }}.png);
+     }
+     {% endif %}
+     }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {% if unsupported %}
+      <h1>Unsupported Feature</h1>
+      {% else %}
+      <h1>Transaction Details</h1>
+      <div class="container-fluid">
+	<h3>Hash: {{ tx.hash.lower() }}</h3>
+        <div class="row" style="margin-bottom: 20px">
+          <div class="col-md-1"><div class="icon from"></div></div>
+          <div class="col-md-7">
+            <h3 style="margin-top: -20px">
+	      <br/>
+	      From: {{ tx.from.lower() }}
+	      <br/>
+	      To: {{ tx.to.lower() }}
+	    </h3>
+          </div>
+	  <div style="margin-left: -40px" class="col-md-1"><div class="icon to"></div></div>
+        </div>
+      </div>
+      <table class="table table-hover">
+	<tbody>
+	  {% for item in tx|dictsort %}
+	  <tr>
+	    <td>{{ item[0] }}</td>
+	    <td>{{ item[1] }}</td>
+	  </tr>
+	  {% endfor %}
+	</tbody>
+      </table>
+      {% endif %}
+    </div>
+  </body>
+</html>

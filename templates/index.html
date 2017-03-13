@@ -33,16 +33,16 @@
       <form method="POST">
         {% if success %}
 	  {% if uport %}
-            <p class="bg-success">UportID being created. See link below for progress and results.<br/>Tx Hash: <a href="https://testnet.etherscan.io/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
+            <p class="bg-success">UportID being created. See link below for progress and results.<br/>Tx Hash: <a href="/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
 	  {% else %}
-            <p class="bg-success">Successfully sent {{ value }} eth.<br/>Tx Hash: <a href="https://testnet.etherscan.io/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
+            <p class="bg-success">Successfully sent {{ value }} eth.<br/>Tx Hash: <a href="/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
 	  {% endif %}
         {% endif %}
         {% if error %}
           <p class="bg-danger">{{ error }}</p>
         {% endif %}
         <div class="form-group">
-          <label for="address">Target address / UPort Device Address</label>
+          <label for="address">Target address{% if support_uport %} / UPort Device Address{% endif %}</label>
           <input type="input" class="form-control" name="address" placeholder="0x..." value="{{ address }}" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <div class="form-group">
@@ -58,7 +58,9 @@
           <input type="number" step="any" class="form-control" name="startgas" placeholder="21000" autocomplete="off" value="{{ startgas }}" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <button type="submit" name="send" value="true" class="btn btn-default">Send</button>
+	{% if support_uport %}
         <button type="submit" name="uport" value="true" class="btn btn-default">Create UPort ID</button>
+	{% endif %}
       </form>
     </div>
   </body>

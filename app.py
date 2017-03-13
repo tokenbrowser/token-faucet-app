@@ -1,10 +1,13 @@
 import os
 import binascii
 import logging
+import random
+import requests
 
 from flask import Flask
 from flask import request
 from flask import render_template
+from flask import redirect
 
 from tokenbrowser.utils import validate_address, validate_int_string, validate_hex_string, validate_decimal_string, parse_int
 from tokenbrowser.tx import sign_transaction
@@ -22,7 +25,8 @@ app = Flask(__name__)
 ETHEREUM_SERVICE_URL = os.environ['ETHEREUM_SERVICE_URL']
 FAUCET_ADDRESS = os.environ['FAUCET_ADDRESS']
 FAUCET_PRIVATE_KEY = os.environ['FAUCET_PRIVATE_KEY']
-UPORT_ID_FACTORY_ADDRESS = os.environ['UPORT_ID_FACTORY_ADDRESS']
+UPORT_ID_FACTORY_ADDRESS = os.environ.get('UPORT_ID_FACTORY_ADDRESS', None)
+JSONRPC_SERVER = os.environ.get('JSONRPC_SERVER', None)
 
 def process_tx_args():
     tx_args = {}
@@ -53,11 +57,14 @@ def main():
     client = EthereumServiceClient(ETHEREUM_SERVICE_URL)
     confirmed, unconfirmed = client.get_balance(FAUCET_ADDRESS)
 
-    args = {'faucet_address': FAUCET_ADDRESS, 'available_ethereum': Decimal(unconfirmed) / 10 ** 18}
+    support_uport = UPORT_ID_FACTORY_ADDRESS is not None
+    args = {'faucet_address': FAUCET_ADDRESS,
+            'available_ethereum': Decimal(unconfirmed) / 10 ** 18,
+            'support_uport': support_uport}
 
     if request.method == 'POST':
         print(request.form)
-        if 'uport' in request.form:
+        if 'uport' in request.form and support_uport:
             if not all(x in request.form for x in ['address']):
                 args['error'] = "Missing required arguments"
             else:
@@ -106,6 +113,7 @@ def main():
                 try:
                     tx_args = process_tx_args()
                     tx = client.generate_tx_skel(FAUCET_ADDRESS, address, wei, **tx_args)
+                    print(tx.nonce)
                     tx_hash = client.send_tx(sign_transaction(tx, FAUCET_PRIVATE_KEY))
                     args['tx_hash'] = tx_hash
                     args['success'] = True
@@ -142,3 +150,25 @@ def main():
                         args['error'] = "Invalid 'ether' value"
 
     return render_template('index.html', **args)
+
+@app.route('/tx/<hash>', methods=['GET'])
+def get_tx(hash):
+
+    if JSONRPC_SERVER is None:
+        return redirect("https://testnet.etherscan.io/tx/{}".format(hash))
+
+    data = {
+        "jsonrpc": "2.0",
+        "id": random.randint(0, 1000000),
+        "method": "eth_getTransactionByHash",
+        "params": [hash]
+    }
+    resp = requests.post(JSONRPC_SERVER, json=data)
+    if resp.status_code != 200:
+        return render_template('tx.html', error="Unexpected Error")
+    resp = resp.json()
+
+    if 'error' in resp:
+        return render_template('tx.html', error="Unexpected Error")
+
+    return render_template('tx.html', tx=resp['result'])
