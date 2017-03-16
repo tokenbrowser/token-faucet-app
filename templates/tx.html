@@ -16,9 +16,11 @@
      .from {
        background-image: url(https://token-id-service.herokuapp.com/identicon/{{ tx.from.lower() }}.png);
      }
+     {% if tx.to %}
      .to {
        background-image: url(https://token-id-service.herokuapp.com/identicon/{{ tx.to.lower() }}.png);
      }
+     {% endif %}
      {% endif %}
      }
     </style>
@@ -38,7 +40,11 @@
 	      <br/>
 	      From: {{ tx.from.lower() }}
 	      <br/>
+	      {% if tx.to %}
 	      To: {{ tx.to.lower() }}
+	      {% else %}
+	      Contract Creation
+	      {% endif %}
 	    </h3>
           </div>
 	  <div style="margin-left: -40px" class="col-md-1"><div class="icon to"></div></div>
