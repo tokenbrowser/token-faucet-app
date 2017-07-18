@@ -9,13 +9,13 @@ from flask import request
 from flask import render_template
 from flask import redirect
 
-from tokenservices.utils import validate_address, validate_int_string, validate_hex_string, validate_decimal_string, parse_int
-from tokenservices.ethereum.tx import sign_transaction
+from toshi.utils import validate_address, validate_int_string, validate_hex_string, validate_decimal_string, parse_int
+from toshi.ethereum.tx import sign_transaction
 
 from decimal import Decimal
 
-from tokenservices.ethereum.utils import sha3, data_decoder, data_encoder
-from tokenservices.clients import EthereumServiceClient
+from toshi.ethereum.utils import sha3, data_decoder, data_encoder
+from toshi.clients import EthereumServiceClient
 
 logging.basicConfig()
 log = logging.getLogger("log")
