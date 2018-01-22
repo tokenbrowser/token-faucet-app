@@ -63,5 +63,15 @@
 	{% endif %}
       </form>
     </div>
+    <script type="application/javascript">
+      setTimeout(function() {
+        if (web3) {
+          var nodes = document.getElementsByName('address');
+          if (nodes.length >= 1) {
+            nodes[0].value = web3.eth.defaultAccount;
+          }
+        }
+      }, 1000);
+    </script>
   </body>
 </html>
