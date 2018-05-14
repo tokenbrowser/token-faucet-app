@@ -48,7 +48,7 @@
           <input type="input" class="form-control" name="address" placeholder="0x..." value="{{ address }}" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <div class="form-group">
-          <label for="value">Amount of Eth</label>
+          <label for="value">Amount of ETH / Token</label>
           <input type="number" step="any" class="form-control" name="value" placeholder="0.01" autocomplete="off" value="{{ value }}" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <div class="form-group">
@@ -59,7 +59,7 @@
           <label for="value">Start Gas (optional)</label>
           <input type="number" step="any" class="form-control" name="startgas" placeholder="21000" autocomplete="off" value="{{ startgas }}" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
-        <button type="submit" name="send" value="true" class="btn btn-default">Send</button>
+        <button type="submit" name="send" value="true" class="btn btn-default">Send ETH</button>
 	{% if support_uport %}
           <button type="submit" name="uport" value="true" class="btn btn-default">Create UPort ID</button>
         {% endif %}
