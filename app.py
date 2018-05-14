@@ -28,6 +28,10 @@ FAUCET_PRIVATE_KEY = os.environ['FAUCET_PRIVATE_KEY']
 UPORT_ID_FACTORY_ADDRESS = os.environ.get('UPORT_ID_FACTORY_ADDRESS', None)
 JSONRPC_SERVER = os.environ.get('JSONRPC_SERVER', None)
 
+TOKENS = os.environ.get('TOKENS', [])
+if TOKENS:
+    TOKENS = [{"address": t.split(',')[0], "symbol": t.split(',')[1], "name": t.split(',')[2], "decimals": int(t.split(',')[3])} for t in TOKENS.split(";")]
+
 def process_tx_args():
     tx_args = {}
     if 'startgas' in request.form:
@@ -60,7 +64,8 @@ def main():
     support_uport = UPORT_ID_FACTORY_ADDRESS is not None
     args = {'faucet_address': FAUCET_ADDRESS,
             'available_ethereum': Decimal(unconfirmed) / 10 ** 18,
-            'support_uport': support_uport}
+            'support_uport': support_uport,
+            'tokens': TOKENS}
 
     if request.method == 'POST':
         print(request.form)
@@ -110,15 +115,34 @@ def main():
                     value = Decimal(value)
                     wei = int(value * 10 ** 18)
 
-                try:
+                if 'send_token' in request.form:
                     tx_args = process_tx_args()
-                    tx = client.generate_tx_skel(FAUCET_ADDRESS, address, wei, **tx_args)
-                    tx_hash = client.send_tx(sign_transaction(tx, FAUCET_PRIVATE_KEY))
-                    args['tx_hash'] = tx_hash
-                    args['success'] = True
+                    token_to_send = [t for t in TOKENS if request.form['send_token'] == t['symbol']]
+                    if len(token_to_send) == 0:
+                        args['error'] = "Unknown token address"
+                    else:
+                        token_to_send = token_to_send[0]
+                        token_address = token_to_send['address']
+                        value = int(value * 10 ** token_to_send['decimals'])
+                        tx_args['data'] = "0xa9059cbb000000000000000000000000{}{:064x}".format(address[2:].lower(), value)
+                        args['token'] = token_to_send
+                        try:
+                            tx = client.generate_tx_skel(FAUCET_ADDRESS, token_address, 0, **tx_args)
+                            tx_hash = client.send_tx(sign_transaction(tx, FAUCET_PRIVATE_KEY))
+                            args['tx_hash'] = tx_hash
+                            args['success'] = True
+                        except Exception as e:
+                            args['error'] = str(e)
+                else:
+                    try:
+                        tx_args = process_tx_args()
+                        tx = client.generate_tx_skel(FAUCET_ADDRESS, address, wei, **tx_args)
+                        tx_hash = client.send_tx(sign_transaction(tx, FAUCET_PRIVATE_KEY))
+                        args['tx_hash'] = tx_hash
+                        args['success'] = True
 
-                except Exception as e:
-                    args['error'] = str(e)
+                    except Exception as e:
+                        args['error'] = str(e)
 
             args.update({k: request.form[k] for k in request.form.keys()})
 

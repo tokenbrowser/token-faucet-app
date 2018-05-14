@@ -1,4 +1,4 @@
 flask
 gunicorn
 requests
--e git+ssh://git@github.com/toshiapp/toshi-services-lib.git#egg=toshi-services
+-e git+ssh://git@github.com/toshiapp/toshi-services-lib.git#egg=toshi-services[ethereum]

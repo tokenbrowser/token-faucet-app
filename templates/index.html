@@ -34,6 +34,8 @@
         {% if success %}
 	  {% if uport %}
             <p class="bg-success">UportID being created. See link below for progress and results.<br/>Tx Hash: <a href="/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
+          {% elif token %}
+            <p class="bg-success">Successfully sent {{ value }} {{ token.symbol }}.<br/>Tx Hash: <a href="/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
 	  {% else %}
             <p class="bg-success">Successfully sent {{ value }} eth.<br/>Tx Hash: <a href="/tx/{{ tx_hash }}">{{ tx_hash }}</a></p>
 	  {% endif %}
@@ -59,8 +61,16 @@
         </div>
         <button type="submit" name="send" value="true" class="btn btn-default">Send</button>
 	{% if support_uport %}
-        <button type="submit" name="uport" value="true" class="btn btn-default">Create UPort ID</button>
-	{% endif %}
+          <button type="submit" name="uport" value="true" class="btn btn-default">Create UPort ID</button>
+        {% endif %}
+        <div>
+          {% for token in tokens %}
+            <p>
+              <img src="https://chart.googleapis.com/chart?cht=qr&chl={{ token.address }}&chs=180x180&choe=UTF-8&chld=L%7C2"/>
+              <button type="submit" name="send_token" value="{{ token.symbol }}" class="btn btn-default">Send {{ token.name }}</button>
+            </p>
+          {% endfor %}
+        </div>
       </form>
     </div>
     <script type="application/javascript">
