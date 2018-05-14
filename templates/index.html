@@ -67,6 +67,7 @@
           {% for token in tokens %}
             <p>
               <img src="https://chart.googleapis.com/chart?cht=qr&chl={{ token.address }}&chs=180x180&choe=UTF-8&chld=L%7C2"/>
+              {{ token.address }}
               <button type="submit" name="send_token" value="{{ token.symbol }}" class="btn btn-default">Send {{ token.name }}</button>
             </p>
           {% endfor %}
